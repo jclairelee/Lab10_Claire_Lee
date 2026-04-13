@@ -60,6 +60,14 @@ class _InputScreenState extends State<InputScreen> {
     isUpdating = false;
   }
 
+  // Check if inputs are valid
+  bool isValidInput() {
+    final usd = double.tryParse(usdController.text);
+    final cad = double.tryParse(cadController.text);
+
+    return usd != null || cad != null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,12 +81,16 @@ class _InputScreenState extends State<InputScreen> {
             // USD input
             TextField(
               controller: usdController,
-              keyboardType: TextInputType.number,
+             keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
                 labelText: 'USD',
+                hintText: 'Enter amount in USD',
                 border: OutlineInputBorder(),
               ),
-              onChanged: convertUsdToCad,
+            onChanged: (value) {
+              convertUsdToCad(value);
+              setState(() {}); // trigger rebuild
+            },
             ),
 
             const SizedBox(height: 20),
@@ -86,18 +98,22 @@ class _InputScreenState extends State<InputScreen> {
             // CAD input
             TextField(
               controller: cadController,
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
                 labelText: 'CAD',
+                hintText: 'Enter amount in CAD',
                 border: OutlineInputBorder(),
               ),
-              onChanged: convertCadToUsd,
+              onChanged: (value) {
+              convertCadToUsd(value);
+              setState(() {}); // trigger rebuild
+            },
             ),
 
             const SizedBox(height: 30),
 
             ElevatedButton(
-              onPressed: () {
+              onPressed: isValidInput() ? () {
                 // Navigate with values
                 Navigator.push(
                   context,
@@ -109,7 +125,8 @@ class _InputScreenState extends State<InputScreen> {
                     ),
                   ),
                 );
-              },
+              }
+              : null,
               child: const Text('Go to Summary'),
             ),
           ],
