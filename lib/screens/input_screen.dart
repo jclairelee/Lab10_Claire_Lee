@@ -74,64 +74,107 @@ class _InputScreenState extends State<InputScreen> {
       appBar: AppBar(
         title: const Text('Currency Input'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // USD input
-            TextField(
-              controller: usdController,
-             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'USD',
-                hintText: 'Enter amount in USD',
-                border: OutlineInputBorder(),
-              ),
-            onChanged: (value) {
-              convertUsdToCad(value);
-              setState(() {}); // trigger rebuild
-            },
+   body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 20),
+
+          const Text(
+            'Currency Converter',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
+            textAlign: TextAlign.center,
+          ),
 
-            const SizedBox(height: 20),
+          const SizedBox(height: 30),
 
-            // CAD input
-            TextField(
-              controller: cadController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'CAD',
-                hintText: 'Enter amount in CAD',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-              convertCadToUsd(value);
-              setState(() {}); // trigger rebuild
-            },
+          // Card container
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
-
-            const SizedBox(height: 30),
-
-            ElevatedButton(
-              onPressed: isValidInput() ? () {
-                // Navigate with values
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SummaryScreen(
-                      usd: usdController.text,
-                      cad: cadController.text,
-                      rate: exchangeRate,
-                    ),
+            child: Column(
+              children: [
+                // USD
+                TextField(
+                  controller: usdController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: 'USD',
+                    hintText: 'Enter USD amount',
+                    border: OutlineInputBorder(),
                   ),
-                );
-              }
-              : null,
-              child: const Text('Go to Summary'),
+                  onChanged: (value) {
+                  convertUsdToCad(value);
+                  setState(() {}); // rebuild UI
+                },
+                ),
+
+                const SizedBox(height: 20),
+
+                // CAD
+                TextField(
+                  controller: cadController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: 'CAD',
+                    hintText: 'Enter CAD amount',
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    convertCadToUsd(value);
+                    setState(() {}); // rebuild UI
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 30),
+
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              backgroundColor: const Color(0xFF1E88E5),
+            ),
+            onPressed: isValidInput()
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SummaryScreen(
+                          usd: usdController.text,
+                          cad: cadController.text,
+                          rate: exchangeRate,
+                        ),
+                      ),
+                    );
+                  }
+                : null,
+            child: const Text(
+              'Go to Summary',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
       ),
+    ),
     );
   }
 }
